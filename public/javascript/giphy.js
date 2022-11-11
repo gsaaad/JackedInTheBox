@@ -28,79 +28,70 @@ var muscleGroupsArr = [
   "upper back",
 ];
 
-//config dotenv to allow for process.env
-//require("dotenv").config();
-
 // for login Forum
 var nameOfUser = $("name");
 var lastName = $("lastname");
 var emailOfUser = $("email");
 var formButton = $("registerBtn");
 
-fetch(`/APIKEY/`, {
-  method: "GET",
-  headers: {
-    "Content-Type": "application/json",
-  },
-})
-  .then((response) => response.json())
-  .then(function (data) {
-    const APIKEY = data;
-    gifButton.on("click", function () {
-      var userEventText = searchedMuscle.val();
-      console.log(userEventText);
+gifButton.on("click", function () {
+  var userEventText = searchedMuscle.val();
+  console.log(userEventText);
 
-      // checking input for lowercase, user may put ABS, and it becomes invalid..
-      if (muscleGroupsArr.includes(userEventText.toLowerCase())) {
-        console.log("There is a match!");
-        console.log(Math.floor(Math.random() * 95));
-        // run fetch call with user's input
-        const fetchExercises = {
-          method: "GET",
-          headers: {
-            "X-RapidAPI-Host": "exercisedb.p.rapidapi.com",
-            "X-RapidAPI-Key": APIKEY,
-          },
-        };
+  // checking input for lowercase, user may put ABS, and it becomes invalid..
+  if (muscleGroupsArr.includes(userEventText.toLowerCase())) {
+    console.log("There is a match!");
+    // run fetch call with user's input
 
-        fetch(
-          `https://exercisedb.p.rapidapi.com/exercises/target/` + userEventText,
-          fetchExercises
-        )
-          .then((response) => response.json())
-          .then(function (data) {
-            // console.log(data);
-            // console.log(data.length, "LENGTH OF ARRAY");
+    const fetchExercises = {
+      method: "GET",
+      headers: {
+        "X-RapidAPI-Key": "204482477cmshdd6f520fedecd46p1ea1fbjsne7e8a3e634f6",
+        "X-RapidAPI-Host": "exercisedb.p.rapidapi.com",
+      },
+    };
 
-            var rndmNum = Math.floor(Math.random() * data.length);
+    fetch(
+      "https://exercisedb.p.rapidapi.com/exercises/target/" + userEventText,
+      fetchExercises
+    )
+      .then((response) => response.json())
+      .then((response) => {
+        console.log("All Exercises: ", response);
+        const allExercises = response;
+        const lengthOfExercises = allExercises.length;
+        const randomNum = Math.floor(Math.random() * lengthOfExercises);
+        const randomExercise = allExercises[randomNum];
+        console.log(randomExercise);
 
-            rndmExercise = data[rndmNum];
+        // Exercise properties from random exercise
+        const exerciseName = randomExercise.name;
+        const exerciseBodyPart = randomExercise.bodyPart;
+        const exerciseEquipment = randomExercise.equipment;
+        const exerciseGIF = randomExercise.gifUrl;
 
-            exerciseName.text(`Exercise Name: ${rndmExercise.name}`);
+        // Target display
+        var exerciseNameDisplay = $("#exercise-name");
+        var exerciseBPDisplay = $("#exercise-bodyPart");
+        var exerciseTargetDisplay = $("#exercise-target");
+        var exerciseGiphyDisplay = $("#exercise-giphy");
+        var exerciseEquipmentDisplay = $("#exercise-equipment");
 
-            exerciseBP.text(`Main body part: ${rndmExercise.bodyPart}`);
-            exerciseTarget.text(`Target muscle: ${rndmExercise.target}`);
-            exerciseEquipment.text(`Equipment: ${rndmExercise.equipment}`);
-            exerciseGiphy.attr("src", `${rndmExercise.gifUrl}`);
-          })
-          .catch((err) =>
-            console.error(
-              err,
-              "there was an error while retriving Searched muscle group"
-            )
-          );
-      } else {
-        console.error(
-          "Could not find this muscle group... Try one of the following"
-        );
-        console.error(muscleGroupsArr);
-        alert("Could not find this muscle group... Try one of the following");
-        alert(muscleGroupsArr);
-      }
-    });
-  });
+        // assign display to new data
+        exerciseNameDisplay[0].innerHTML = `Exercise Name: ${exerciseName}`;
 
-// event lister for exercise + GIF
-
-// registration feeding
-// formButton.on("");
+        exerciseBPDisplay[0].innerHTML = `Main body part: ${userEventText}`;
+        exerciseTargetDisplay[0].innerHTML = `Target muscle: ${exerciseBodyPart}`;
+        exerciseGiphyDisplay[0].src = exerciseGIF;
+        exerciseEquipmentDisplay[0].innerHTML = `Equipment: ${exerciseEquipment}`;
+      })
+      .catch((err) => console.error(err));
+  } else {
+    console.error(
+      "Could not find this muscle group... Try one of the following"
+    );
+    console.error(muscleGroupsArr);
+    alert("Could not find this muscle group... Try one of the following");
+    alert(muscleGroupsArr);
+  }
+});
