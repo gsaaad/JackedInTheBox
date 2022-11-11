@@ -79,7 +79,6 @@ gifButton.on("click", function () {
 
         // assign display to new data
         exerciseNameDisplay[0].innerHTML = `Exercise Name: ${exerciseName}`;
-
         exerciseBPDisplay[0].innerHTML = `Main body part: ${userEventText}`;
         exerciseTargetDisplay[0].innerHTML = `Target muscle: ${exerciseBodyPart}`;
         exerciseGiphyDisplay[0].src = exerciseGIF;
