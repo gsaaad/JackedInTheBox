@@ -22,6 +22,7 @@ async function signupFormHandler(event) {
         password,
         workoutType,
         weight,
+
         height,
       }),
       headers: { "Content-Type": "application/json" },
